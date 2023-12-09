@@ -1,44 +1,33 @@
 
 #pragma once
 
-#include <filesystem>
-
 #include "gl/VertexArray.hpp"
 #include "gl/Buffer.hpp"
 
 #include "graphics/Transformable.hpp"
-#include "graphics/Texture.hpp"
 #include "graphics/Drawable.hpp"
-
-namespace showdown {
-
-    class RegistryKey;
-
-}
+#include "graphics/Color.hpp"
 
 namespace showdown::graphics {
 
-    class Sprite : public Transformable, public Drawable {
-        Texture _texture;
-        gl::VertexArray _array;
-        gl::Buffer _buffer;
+    class Shape : public Transformable, public Drawable {
+        protected:
+            gl::VertexArray _array;
+            gl::Buffer _buffer;
+            color _color = white;
 
-        void setupBuffer();
+            virtual void setupBuffer() = 0;
+            virtual void drawShape(const Window &window, const Pipeline &pipeline) const = 0;
 
         public:
-            Sprite(const Sprite &other);
-            Sprite(Sprite &&other) noexcept;
-            Sprite(const Texture &texture);
-            Sprite(Texture &&texture);
-            Sprite(const char *path);
-            Sprite(const std::string &path);
-            Sprite(const std::filesystem::path &path);
-            Sprite(const RegistryKey &key);
+            Shape() = default;
+            Shape(const Shape &other);
+            Shape(Shape &&other) noexcept;
 
-            ~Sprite();
+            ~Shape() = default;
 
-            Sprite &operator=(const Sprite &other);
-            Sprite &operator=(Sprite &&other) noexcept;
+            Shape &operator=(const Shape &other);
+            Shape &operator=(Shape &&other) noexcept;
 
             void setPosition(const float x, const float y);
             void setPosition(const math::vec2f &position);
@@ -54,17 +43,10 @@ namespace showdown::graphics {
             void setOrigin(const float x, const float y);
             void setOrigin(const math::vec2f &origin);
 
-            void setTexture(const Texture &texture);
-            void setTexture(Texture &&texture);
-            void setTexture(const char *path);
-            void setTexture(const std::string &path);
-            void setTexture(const std::filesystem::path &path);
-
             math::vec2f getPosition() const;
             math::vec2f getScale() const;
             math::vec2f getOrigin() const;
             float getRotation() const;
-            const Texture &getTexture() const;
 
             virtual void draw(const Window &window) const override;
             virtual void draw(const Window &window, const float z) const override;
@@ -72,7 +54,5 @@ namespace showdown::graphics {
             virtual void draw(const Window &window, const float z, const Pipeline &pipeline) const override;
             virtual void setup(const Pipeline &pipeline) const override;
     };
-
-    Sprite fromRegistry(const RegistryKey &key);
 
 }

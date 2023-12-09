@@ -27,6 +27,8 @@ namespace showdown::gl {
     }
 
     void Uniform::set(GLfloat v0) const {
+        // std::cout << location << std::endl;
+        // std::cout << v0 << std::endl;
         glUniform1f(location, v0);
     }
 

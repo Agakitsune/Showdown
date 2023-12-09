@@ -1,0 +1,9 @@
+{
+    "type": "texture",
+    "vertex": [
+        "showdown:default/texture/vertex"
+    ],
+    "fragment": [
+        "showdown:default/texture/fragment"
+    ]
+}

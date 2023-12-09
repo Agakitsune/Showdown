@@ -2,9 +2,13 @@
 #pragma once
 
 #include <unordered_map>
+#include <memory>
+#include <functional>
 
 #include "gl/Program.hpp"
 #include "utils/Program.hpp"
+#include "utils/Shader.hpp"
+#include "utils/VertexArray.hpp"
 
 namespace showdown::graphics {
 
@@ -12,6 +16,7 @@ namespace showdown::graphics {
         gl::Program _program;
 
         public:
+            Pipeline() = default;
             Pipeline(const std::string &vertexPath, const std::string &fragmentPath);
             Pipeline(const std::string &vertexPath, const std::string &geometryPath, const std::string &fragmentPath);
             Pipeline(const gl::Program &program);
@@ -21,7 +26,11 @@ namespace showdown::graphics {
 
             virtual ~Pipeline() = default;
 
-            virtual void setup() const;
+            void addShader(const std::string &path, const gl::ShaderType type) const;
+            void link() const;
+
+            void use() const;
+            virtual void setup() const = 0;
             virtual void reset() const;
 
             void set(const std::string &uniform, GLfloat v0) const;
@@ -73,6 +82,14 @@ namespace showdown::graphics {
             
             void set3x4(const std::string &uniform, GLsizei count, GLboolean transpose, GLfloat *value) const;
             void set4x3(const std::string &uniform, GLsizei count, GLboolean transpose, GLfloat *value) const;
+    };
+
+    class PipelineBuilder {
+        static std::unordered_map<std::string, std::function<std::unique_ptr<Pipeline>()>> _builders;
+
+        public:
+            static void registerPipeline(const std::string &name, const std::function<std::unique_ptr<Pipeline>()> &builder);
+            static std::unique_ptr<Pipeline> buildPipeline(const std::string &name);
     };
 
 }

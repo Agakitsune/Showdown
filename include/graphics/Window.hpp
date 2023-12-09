@@ -9,6 +9,14 @@
 #include "graphics/Projector.hpp"
 #include "graphics/Color.hpp"
 
+// #include "ressource/Manager.hpp"
+
+namespace showdown {
+
+    class RegistryKey;
+
+}
+
 namespace showdown::graphics {
 
     class Window {
@@ -35,6 +43,7 @@ namespace showdown::graphics {
             void pollEvents() const;
 
             void usePipeline(const Pipeline &pipeline);
+            void usePipeline(const RegistryKey &pipeline);
 
             template<typename T>
             requires std::is_base_of_v<Projector, T>
@@ -42,8 +51,10 @@ namespace showdown::graphics {
                 _projector = std::make_unique<T>(projector);
             }
 
-            void draw(const Drawable &drawable, const Pipeline *pipeline = nullptr) const;
-            void draw(const Drawable &drawable, const float z, const Pipeline *pipeline = nullptr) const;
+            void draw(const Drawable &drawable) const;
+            void draw(const Drawable &drawable, const float z) const;
+            void draw(const Drawable &drawable, const Pipeline &pipeline) const;
+            void draw(const Drawable &drawable, const float z, const Pipeline &pipeline) const;
             void drawPrimitive(const showdown::gl::DrawMode mode, int first, int count) const;
 
             void clear(const color &color = black) const;

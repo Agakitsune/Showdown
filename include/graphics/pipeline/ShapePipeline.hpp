@@ -6,13 +6,12 @@
 
 namespace showdown::graphics {
 
-    class SpritePipeline : public Pipeline {
+    class ShapePipeline : public Pipeline {
         public:
             using Pipeline::Pipeline;
-            virtual ~SpritePipeline() override = default;
+            virtual ~ShapePipeline() override = default;
 
             virtual void setup() const override;
-            virtual void reset() const override;
     };
 
 }

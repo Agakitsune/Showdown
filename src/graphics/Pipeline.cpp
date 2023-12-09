@@ -15,11 +15,27 @@ namespace showdown::graphics {
 
     Pipeline::Pipeline(gl::Program &&program) : _program(std::move(program)) {}
 
-    void Pipeline::setup() const {
+    void Pipeline::addShader(const std::string &path, const gl::ShaderType type) const {
+        try {
+            _program.attach(utils::loadShader(path, type));
+        } catch (const std::exception &e) {
+            std::cerr << e.what() << std::endl;
+        }
+    }
+
+    void Pipeline::link() const {
+        _program.link();
+    }
+
+    void Pipeline::use() const {
         _program.use();
     }
 
-    void Pipeline::reset() const {}
+    // void Pipeline::setup() const;
+
+    void Pipeline::reset() const {
+        showdown::utils::disableAll();
+    }
 
     void Pipeline::set(const std::string &uniform, GLfloat v0) const {
         gl::Uniform u = _program.getUniform(uniform);
@@ -187,6 +203,21 @@ namespace showdown::graphics {
         if (!u.isValid())
             return;
         u.set4x3(count, transpose, value);
+    }
+
+    std::unordered_map<std::string, std::function<std::unique_ptr<Pipeline>()>> PipelineBuilder::_builders;
+
+    void PipelineBuilder::registerPipeline(const std::string &name, const std::function<std::unique_ptr<Pipeline>()> &builder) {
+        _builders[name] = builder;
+    }
+
+    std::unique_ptr<Pipeline> PipelineBuilder::buildPipeline(const std::string &name) {
+        try {
+            return _builders.at(name)();
+        } catch (const std::exception &e) {
+            std::cerr << e.what() << std::endl;
+            return nullptr;
+        }
     }
 
 }

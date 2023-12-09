@@ -24,6 +24,8 @@ file(GLOB SOURCE
     ${PROJECT_SOURCE_DIR}/src/graphics/*.cpp
     ${PROJECT_SOURCE_DIR}/src/graphics/pipeline/*.cpp
     ${PROJECT_SOURCE_DIR}/src/graphics/projector/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/graphics/shape/*.cpp
+    ${PROJECT_SOURCE_DIR}/src/ressource/*.cpp
     ${PROJECT_SOURCE_DIR}/src/utils/*.cpp
 )
 

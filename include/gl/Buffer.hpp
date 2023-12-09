@@ -22,7 +22,7 @@ namespace showdown::gl {
             Buffer& operator=(const Buffer&) = delete;
             Buffer& operator=(Buffer&&) noexcept;
 
-            void bind(BufferTarget target);
+            void bind(BufferTarget target) const;
             void target(BufferTarget target);
 
             void data(const void* data, size_t size, BufferUsage usage) const;

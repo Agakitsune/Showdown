@@ -22,9 +22,8 @@ namespace showdown::gl {
         return *this;
     }
 
-    void Buffer::bind(BufferTarget target) {
+    void Buffer::bind(BufferTarget target) const {
         glBindBuffer(static_cast<GLenum>(target), handle);
-        this->_target = target;
     }
 
     void Buffer::target(BufferTarget target) {

@@ -3,25 +3,29 @@
 #include "graphics/Pipeline.hpp"
 #include "graphics/Window.hpp"
 
+#include "ressource/Manager.hpp"
+
 namespace showdown::graphics {
     
     void Sprite::setupBuffer() {
         _array.bind();
+        _buffer.target(gl::BufferTarget::ArrayBuffer);
         _buffer.bind(gl::BufferTarget::ArrayBuffer);
 
         math::vec2u textureSize = _texture.size();
 
         float vertices[] = {
-            0.0f, 0.0f,                                                               1.0f, 1.0f, 1.0f,       0.0f, 0.0f,
-            static_cast<float>(textureSize.x), 0.0f,                                  1.0f, 1.0f, 1.0f,       1.0f, 0.0f,
-            0.0f, static_cast<float>(textureSize.y),                                  1.0f, 1.0f, 1.0f,       0.0f, 1.0f,
-            static_cast<float>(textureSize.x), static_cast<float>(textureSize.y),     1.0f, 1.0f, 1.0f,       1.0f, 1.0f,
+            0.0f, 0.0f,                                                               1.0f, 1.0f, 1.0f, 1.0f,       0.0f, 0.0f,
+            static_cast<float>(textureSize.x), 0.0f,                                  1.0f, 1.0f, 1.0f, 1.0f,       1.0f, 0.0f,
+            0.0f, static_cast<float>(textureSize.y),                                  1.0f, 1.0f, 1.0f, 1.0f,       0.0f, 1.0f,
+            static_cast<float>(textureSize.x), static_cast<float>(textureSize.y),     1.0f, 1.0f, 1.0f, 1.0f,       1.0f, 1.0f,
         };//Position                                                                        Color                   UV
 
         _buffer.data(vertices, gl::BufferUsage::StaticDraw);
     }
 
     Sprite::Sprite(const Sprite &other) : _texture(other._texture) {
+        _buffer.target(gl::BufferTarget::ArrayBuffer);
         _buffer.bind(gl::BufferTarget::ArrayBuffer);
         _buffer.data(other._buffer.getData().data(), other._buffer.size(), gl::BufferUsage::StaticDraw);
     }
@@ -48,6 +52,11 @@ namespace showdown::graphics {
 
     Sprite::Sprite(const std::filesystem::path &path) {
         _texture = Texture(path);
+        setupBuffer();
+    }
+
+    Sprite::Sprite(const RegistryKey &key) {
+        _texture = Manager::getRegistry<Registry<graphics::Texture>>("textures").get(key);
         setupBuffer();
     }
 
@@ -153,8 +162,20 @@ namespace showdown::graphics {
         return _texture;
     }
 
+    void Sprite::draw(const Window &window) const {
+        window.draw(*this,
+            Manager::getRegistry<Registry<Pipeline>>(RegistryKey::of("showdown:pipeline"))
+            .get(RegistryKey::of("showdown:texture")));
+    }
+
+    void Sprite::draw(const Window &window, const float z) const {
+        window.draw(*this, z,
+            Manager::getRegistry<Registry<Pipeline>>(RegistryKey::of("showdown:pipeline"))
+            .get(RegistryKey::of("showdown:texture")));
+    }
+
     void Sprite::draw(const Window &window, const Pipeline &pipeline) const {
-        pipeline.set("Z", 0);
+        pipeline.set("Z", 0.0f);
         window.drawPrimitive(gl::DrawMode::TriangleStrip, 0, 4);
     }
 
@@ -171,6 +192,7 @@ namespace showdown::graphics {
         pipeline.set("Texture", 0);
 
         _array.bind();
+        _buffer.bind(gl::BufferTarget::ArrayBuffer);
     }
 
 } // namespace showdown::graphics

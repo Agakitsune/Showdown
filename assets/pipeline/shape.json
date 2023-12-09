@@ -1,0 +1,9 @@
+{
+    "type": "shape",
+    "vertex": [
+        "showdown:default/shape/vertex"
+    ],
+    "fragment": [
+        "showdown:default/shape/fragment"
+    ]
+}
